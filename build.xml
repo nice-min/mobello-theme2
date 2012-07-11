@@ -1,0 +1,220 @@
+<project name="Mobello theme" default="compile.all" basedir=".">
+  <description>
+    scss 파일 css로 컴파일
+  </description>
+  <property name="jruby-version" value="1.6.7.2"/>
+  <property name="scssdir" value="C:\Users\bw.min\git\mobello\mobello\lib\resources\scss"/>
+  <path id="JRuby">
+    <fileset file="lib/jruby-complete-${jruby-version}.jar"/>
+    <!-- Location of JRuby jar file -->
+  </path>
+  <target name="install.library" depends="download.jruby,update.systems,install.sass,install.compass">
+    <description>
+      필요한 라이브러리를 설치한다.
+    </description>
+  </target>
+  <target name="download.jruby" description="download.jruby">
+    <get src="http://jruby.org.s3.amazonaws.com/downloads/${jruby-version}/jruby-complete-${jruby-version}.jar" 
+        dest="lib" 
+        verbose="true"
+        usetimestamp="true"/>
+  </target>
+  <target name="update.rubygems-update" description="update.systems">
+    <!-- this updates the gems on the system -->
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="-S" />
+      <arg value="gem" />
+      <arg value="install" />
+      <arg value="rubygems-update" />
+    </java>
+    <!-- this removes any obsoleted / previous version of all gems -->
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="-S" />
+      <arg value="gem" />
+      <arg value="cleanup" />
+    </java>
+  </target>
+  <target name="update.systems" description="update.systems">
+    <!-- this updates the gems on the system -->
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="-S" />
+      <arg value="gem" />
+      <arg value="update" />
+      <arg value="--system" />
+    </java>
+    <!-- this removes any obsoleted / previous version of all gems -->
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="-S" />
+      <arg value="gem" />
+      <arg value="cleanup" />
+    </java>
+  </target>
+  <target name="install.sass" description="update the installed gems">
+    <!-- this updates the gems on the system -->
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="-S" />
+      <arg value="gem" />
+      <arg value="install" />
+      <arg value="sass" />
+      <arg value="--pre" />
+    </java>
+    <!-- this removes any obsoleted / previous version of all gems -->
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="-S" />
+      <arg value="gem" />
+      <arg value="cleanup" />
+    </java>
+  </target>
+  <target name="install.compass" description="update the installed gems">
+    <!-- this updates the gems on the system -->
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="-S" />
+      <arg value="gem" />
+      <arg value="install" />
+      <arg value="compass" />
+    </java>
+    <!-- this removes any obsoleted / previous version of all gems -->
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="-S" />
+      <arg value="gem" />
+      <arg value="cleanup" />
+    </java>
+  </target>
+  <target name="compile.all" depends="compass.compile.base, compass.compile.default, compass.compile.simple, compass.compile.custom">
+    <description>
+      default, simple, custom(사용자가 추가한) theme(scss)을 컴파일해서 css파일을 생성한다.
+    </description>
+  </target>
+  <target name="compass.watch.base" description="watch for changes">
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="conf/compile.rb" />
+      <arg value="${scssdir}/base" />
+      <arg value="watch" />
+      <arg value="${scssdir}/base" />
+    </java>
+  </target>
+  <target name="compass.compile.base" description="compile">
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="conf/compile.rb" />
+      <arg value="${scssdir}/base" />
+      <arg value="compile" />
+      <arg value="${scssdir}/base" />
+    </java>
+  </target>
+  <target name="compass.watch.default" description="watch for changes">
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <arg value="conf/compile.rb" />
+      <arg value="${scssdir}/themes/default" />
+      <arg value="watch" />
+      <arg value="${scssdir}/themes/default" />
+    </java>
+  </target>
+  <target name="compass.compile.default" description="compile">
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="conf/compile.rb" />
+      <arg value="${scssdir}/themes/default" />
+      <arg value="compile" />
+      <arg value="${scssdir}/themes/default" />
+    </java>
+  </target>
+  <target name="compass.watch.simple" description="watch for changes">
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="conf/compile.rb" />
+      <arg value="${scssdir}/themes/simple" />
+      <arg value="watch" />
+      <arg value="${scssdir}/themes/simple" />
+    </java>
+  </target>
+  <target name="compass.compile.simple" description="compile">
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="conf/compile.rb" />
+      <arg value="${scssdir}/themes/simple" />
+      <arg value="compile" />
+      <arg value="${scssdir}/themes/simple" />
+    </java>
+  </target>
+  <target name="compass.watch.ios" description="watch for changes">
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="conf/compile.rb" />
+      <arg value="${scssdir}/themes/ios" />
+      <arg value="watch" />
+      <arg value="${scssdir}/themes/ios" />
+    </java>
+  </target>
+  <target name="compass.compile.ios" description="compile">
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="conf/compile.rb" />
+      <arg value="${scssdir}/themes/ios" />
+      <arg value="compile" />
+      <arg value="${scssdir}/themes/ios" />
+    </java>
+  </target>
+  <target name="compass.compile.custom" description="compile">
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="conf/compile.rb" />
+      <arg value="${scssdir}/themes/${custom}" />
+      <arg value="compile" />
+      <arg value="${scssdir}/themes/${custom}" />
+    </java>
+  </target>
+  <target name="compass.watch.custom" description="watch for changes">
+    <java classname="org.jruby.Main" fork="true" failonerror="true">
+      <classpath refid="JRuby" />
+      <env key="GEM_PATH" value="lib/gems" />
+      <env key="GEM_HOME" value="lib/gems" />
+      <arg value="conf/compile.rb" />
+      <arg value="${scssdir}/themes/${custom}" />
+      <arg value="watch" />
+      <arg value="${scssdir}/themes/${custom}" />
+    </java>
+  </target>
+</project>
